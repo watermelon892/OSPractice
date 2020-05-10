@@ -1,17 +1,16 @@
 TARGET     = helloos
 ASM_SRC    = $(TARGET).S
-TMP_IMG    = tmp.img
+LINKER_SCR = $(TARGET).ld
 TARGET_IMG = $(TARGET).img
-AS         = as
-DD         = dd
+LINKER_OPT = -nostdlib -T
+GCC        = gcc
 QEMU       = qemu-system-x86_64
 
 all:
-	$(AS) $(ASM_SRC) -o $(TMP_IMG)
-	$(DD) if=$(TMP_IMG) of=$(TARGET_IMG) skip=64 bs=1
+	$(GCC) $(LINKER_OPT) $(LINKER_SCR) $(ASM_SRC) -o $(TARGET_IMG)
 
 qemu:
 	$(QEMU) -fda $(TARGET_IMG)
 
 clean:
-	rm $(TMP_IMG) $(TARGET_IMG)
+	rm $(TARGET_IMG)
