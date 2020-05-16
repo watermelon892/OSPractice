@@ -10,7 +10,7 @@
     | JMP         | jmp         |
     | MOV         | movw / movb |
     | ADD         | addw        |
-    | CMP         | cmpb        |
+    | CMP         | cmpw / cmpb |
     | JE          | je          |
     | INT         | int         |
     | HLT         | hlt         |
@@ -53,12 +53,22 @@ entry:
     movb $0, %dh     // Head: 0
     movb $2, %cl     // Sector: 2
 
+    movw $0, %si     // Register that counts the number of failures
+
+retry:
     movb $0x02, %ah  // AH=0x02 Read Disk
     movb $1, %al     // 1 Sector
     movw $0, %bx
     movb $0x00, %dl  // A Drive
     int  $0x13       // Call Disk Bios
-    jc   error
+    jnc  fin
+    addw $1, %si     // Add 1 to SI
+    cmpw $5, %si     // Compare SI and 5
+    jae  error       // IF SI >= 5 THEN error
+    movb $0x00, %ah
+    movb $0x00, %dl  // A Drive
+    int  $0x13       // Reset Drive
+    jmp  retry
 
 fin:
     // Sleep
