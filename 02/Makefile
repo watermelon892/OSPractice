@@ -1,4 +1,4 @@
-TARGET     = helloos
+TARGET     = ipl
 ASM_SRC    = $(TARGET).S
 LINKER_SCR = $(TARGET).ld
 TARGET_IMG = $(TARGET).img
