@@ -12,6 +12,8 @@
     | ADD         | addw        |
     | CMP         | cmpw / cmpb |
     | JE          | je          |
+    | JNC         | jnc         |
+    | JAE         | jae         |
     | INT         | int         |
     | HLT         | hlt         |
     */
