@@ -13,7 +13,6 @@ TARGET_OS  = $(OS).sys
 TARGET_IMG = $(TARGET).img
 
 GCC        = gcc
-DD         = dd
 
 # Install Qemu
 QEMU       = qemu-system-x86_64
