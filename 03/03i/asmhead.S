@@ -27,6 +27,8 @@
     int  $0x16                 // Keyboard BIOS
     mov  %al, (LEDS)
 
+    // Prevent PIC from accepting interrupts
+
     movb $0xff, %al
     outb %al, $0x21
     nop
@@ -34,21 +36,25 @@
 
     cli
 
+    // Setting A20GATE
+    // Allow the CPU to access more than 1MB of memory
+
     call waitkbdout
     movb $0xd1, %al
     outb %al, $0x64
     call waitkbdout
-    movb $0xdf, %al
+    movb $0xdf, %al            // Enable A20
     outb %al, $0x60
     call waitkbdout
 
     // Protect Mode
-    .arch i486
 
-    lgdt (GDTR0)
+    .arch i486                 // I want to use instructions up to 486
+
+    lgdt (GDTR0)               // Provisionally set GDT
     movl %cr0, %eax
-    andl $0x7fffffff, %eax
-    orl  $0x00000001, %eax
+    andl $0x7fffffff, %eax     // Set BIT31 to 0 (To prohibit paging)
+    orl  $0x00000001, %eax     // Set BIT0 to 1 (To enter protected mode)
     movl %eax, %cr0
     jmp  pipelineflush
 
