@@ -1,16 +1,16 @@
     .text
     .code16
 
-    .set BOTPAK, 0x00280000    // Load destination of bootpack
-    .set DSKCAC, 0x00100000    // Place of Disk cache
+    .set BOTPAK,  0x00280000    // Load destination of bootpack
+    .set DSKCAC,  0x00100000    // Place of Disk cache
     .set DSKCAC0, 0x00008000   // Place of Disk cache (Real Mode)
 
-    .set CYLS, 0x0ff0          // Set by boot sector
-    .set LEDS, 0x0ff1
+    .set CYLS,  0x0ff0         // Set by boot sector
+    .set LEDS,  0x0ff1
     .set VMODE, 0x0ff2         // Information about colors. N bit color?
     .set SCRNX, 0x0ff4         // Display Resolution X
     .set SCRNY, 0x0ff6         // Display Resolution Y
-    .set VRAM, 0x0ff8          // Start address of the graphic buffer
+    .set VRAM,  0x0ff8         // Start address of the graphic buffer
 
     // Setting Video Mode
     movb $0x13, %al            // VGA graphics. 320x200x8bit Color
@@ -23,9 +23,9 @@
     movl $0x000a0000, (VRAM)
 
     // Get keyboard led status from BIOS
-    mov  $0x02, %ah
+    movb $0x02, %ah
     int  $0x16                 // Keyboard BIOS
-    mov  %al, (LEDS)
+    movb %al, (LEDS)
 
     // Prevent PIC from accepting interrupts
 
@@ -91,7 +91,7 @@ pipelineflush:
     movl $BOTPAK, %ebx
     movl 16(%ebx), %ecx
     add  $3, %ecx
-    SHR  $2, %ecx
+    shr  $2, %ecx
     jz   skip
     movl 20(%ebx), %esi
     add  %ebx, %esi
@@ -100,7 +100,7 @@ pipelineflush:
 
 skip:
     mov   12(%ebx), %esp
-    ljmpl $2+8, $0x0000001b
+    ljmpl $2*8, $0x0000001b
 
 waitkbdout:
     inb  $0x64, %al
@@ -129,5 +129,4 @@ GDTR0:
     .word 8*3-1
     .int  GDT0
 
-    .align 16
 bootpack:
