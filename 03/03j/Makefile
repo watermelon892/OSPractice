@@ -14,12 +14,17 @@ BOOTPACK_LNK = $(BOOTPACK).ld
 ASMFUNC_SRC  = $(ASMFUNC).S
 
 IPL_BIN      = $(TARGET_DIR)/$(IPL).bin
+IPL_OBJ      = $(TARGET_DIR)/$(IPL).o
 ASMHEAD_BIN  = $(TARGET_DIR)/$(ASMHEAD).bin
+ASMHEAD_OBJ  = $(TARGET_DIR)/$(ASMHEAD).o
 ASMFUNC_OBJ  = $(TARGET_DIR)/$(ASMFUNC).o
 BOOTPACK_OBJ = $(TARGET_DIR)/$(BOOTPACK).o
 BOOTPACK_BIN = $(TARGET_DIR)/$(BOOTPACK).bin
 TARGET_SYS   = $(TARGET_DIR)/$(TARGET).sys
 TARGET_IMG   = $(TARGET_DIR)/$(TARGET).img
+IPL_LST      = $(TARGET_DIR)/$(IPL).lst
+ASMHEAD_LST  = $(TARGET_DIR)/$(ASMHEAD).lst
+ASMFUNC_LST  = $(TARGET_DIR)/$(ASMFUNC).lst
 
 CAT     = cat
 MKDIR   = mkdir
@@ -37,14 +42,16 @@ all: $(TARGET_IMG)
 $(IPL_BIN): $(IPL_LNK) $(IPL_SRC)
 	$(MKDIR) -p $(TARGET_DIR)
 	$(GCC) -nostdlib -T $^ -o $@
+	$(GCC) -T $(IPL_LNK) -c -g -Wa,-a,-ad $(IPL_SRC) -o $(IPL_OBJ) > $(IPL_LST)
 
 $(ASMHEAD_BIN): $(ASMHEAD_LNK) $(ASMHEAD_SRC)
 	$(MKDIR) -p $(TARGET_DIR)
 	$(GCC) -nostdlib -T $^ -o $@
+	$(GCC) -T $(ASMHEAD_LNK) -c -g -Wa,-a,-ad $(ASMHEAD_SRC) -o $(ASMHEAD_OBJ) > $(ASMHEAD_LST)
 
 $(ASMFUNC_OBJ): $(ASMFUNC_SRC)
 	$(MKDIR) -p $(TARGET_DIR)
-	$(GCC) -m32 -c $< -o $@
+	$(GCC) -m32 -c -g -Wa,-a,-ad $< -o $@ > $(ASMFUNC_LST)
 
 $(BOOTPACK_OBJ): $(BOOTPACK_SRC)
 	$(MKDIR) -p $(TARGET_DIR)
