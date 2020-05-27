@@ -1,4 +1,4 @@
-;; sbcl --load convert-hankaku-text.lisp
+;; sbcl --load convert-hankaku-text-to-asm.lisp
 
 (defconstant +input-file+ "./hankaku.txt")
 (defconstant +output-file+ "./hankaku.S")
