@@ -33,13 +33,13 @@ void putfont8(char *vram, int xsize, int x, int y, char c, char *font);
 #define COL8_008484 14
 #define COL8_848484 15
 
-extern char hankaku[4096];
-
 struct BOOTINFO {
   char  cyls, leds, vmode, reserve;
   short scrnx, scrny;
   char  *vram;
 };
+
+extern char hankaku[4096];
 
 void HariMain(void) {
   struct BOOTINFO *binfo = (struct BOOTINFO*)0x0ff0;
@@ -48,19 +48,19 @@ void HariMain(void) {
 
   init_screen(binfo->vram, binfo->scrnx, binfo->scrny);
 
-  putfont8(binfo->vram, binfo->scrnx,  10, 10, COL8_FFFFFF, hankaku + ('H' * 16));
-  putfont8(binfo->vram, binfo->scrnx,  20, 10, COL8_FFFFFF, hankaku + ('e' * 16));
-  putfont8(binfo->vram, binfo->scrnx,  30, 10, COL8_FFFFFF, hankaku + ('l' * 16));
-  putfont8(binfo->vram, binfo->scrnx,  40, 10, COL8_FFFFFF, hankaku + ('l' * 16));
-  putfont8(binfo->vram, binfo->scrnx,  50, 10, COL8_FFFFFF, hankaku + ('o' * 16));
-  putfont8(binfo->vram, binfo->scrnx,  60, 10, COL8_FFFFFF, hankaku + (',' * 16));
-  putfont8(binfo->vram, binfo->scrnx,  70, 10, COL8_FFFFFF, hankaku + (' ' * 16));
-  putfont8(binfo->vram, binfo->scrnx,  80, 10, COL8_FFFFFF, hankaku + ('w' * 16));
-  putfont8(binfo->vram, binfo->scrnx,  90, 10, COL8_FFFFFF, hankaku + ('o' * 16));
-  putfont8(binfo->vram, binfo->scrnx, 100, 10, COL8_FFFFFF, hankaku + ('r' * 16));
-  putfont8(binfo->vram, binfo->scrnx, 110, 10, COL8_FFFFFF, hankaku + ('l' * 16));
-  putfont8(binfo->vram, binfo->scrnx, 120, 10, COL8_FFFFFF, hankaku + ('d' * 16));
-  putfont8(binfo->vram, binfo->scrnx, 130, 10, COL8_FFFFFF, hankaku + ('!' * 16));
+  putfont8(binfo->vram, binfo->scrnx,  10, 10, COL8_FFFFFF, hankaku + 'H' * 16);
+  putfont8(binfo->vram, binfo->scrnx,  20, 10, COL8_FFFFFF, hankaku + 'e' * 16);
+  putfont8(binfo->vram, binfo->scrnx,  30, 10, COL8_FFFFFF, hankaku + 'l' * 16);
+  putfont8(binfo->vram, binfo->scrnx,  40, 10, COL8_FFFFFF, hankaku + 'l' * 16);
+  putfont8(binfo->vram, binfo->scrnx,  50, 10, COL8_FFFFFF, hankaku + 'o' * 16);
+  putfont8(binfo->vram, binfo->scrnx,  60, 10, COL8_FFFFFF, hankaku + ',' * 16);
+  putfont8(binfo->vram, binfo->scrnx,  70, 10, COL8_FFFFFF, hankaku + ' ' * 16);
+  putfont8(binfo->vram, binfo->scrnx,  80, 10, COL8_FFFFFF, hankaku + 'w' * 16);
+  putfont8(binfo->vram, binfo->scrnx,  90, 10, COL8_FFFFFF, hankaku + 'o' * 16);
+  putfont8(binfo->vram, binfo->scrnx, 100, 10, COL8_FFFFFF, hankaku + 'r' * 16);
+  putfont8(binfo->vram, binfo->scrnx, 110, 10, COL8_FFFFFF, hankaku + 'l' * 16);
+  putfont8(binfo->vram, binfo->scrnx, 120, 10, COL8_FFFFFF, hankaku + 'd' * 16);
+  putfont8(binfo->vram, binfo->scrnx, 130, 10, COL8_FFFFFF, hankaku + '!' * 16);
 
   for (;;) {
     io_hlt();
