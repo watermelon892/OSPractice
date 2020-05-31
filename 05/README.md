@@ -20,7 +20,7 @@
 
 ![template](https://github.com/watermelon892/OSPractice/blob/master/05/pic/05g.png)
 
-05h
+05h - 05i
 
 ![template](https://github.com/watermelon892/OSPractice/blob/master/05/pic/05h.png)
 
