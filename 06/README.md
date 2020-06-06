@@ -1,6 +1,6 @@
 ## Demo
 
-06a
+06a - 06b
 
 ![template](https://github.com/watermelon892/OSPractice/blob/master/06/pic/06a.png)
 
