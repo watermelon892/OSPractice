@@ -30,8 +30,8 @@ void inthandler21(int *esp) {
   io_out8(PIC0_OCW2, 0x61); // Notify PIC that IRQ-01 has been accepted
   data = io_in8(PORT_KEYDAT);
 
-  my_sprintf(s, "%X", data);
-  boxfill8(binfo->vram, binfo->scrnx, COL8_008484, 0, 16, 15, 31);
+  my_sprintf(s, "%04X", data);
+  boxfill8(binfo->vram, binfo->scrnx, COL8_008484, 0, 16, 30, 31);
   putfonts8_asc(binfo->vram, binfo->scrnx, 0, 16, COL8_FFFFFF, s);
 
   return;

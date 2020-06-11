@@ -7,7 +7,7 @@
 #define FALSE 0
 
 int my_sprintf(char *str, char *format, ...);
-int dec2asc(char *str, int dec);
-int hex2asc(char *str, int dec, int is_uppercase);
+int dec2asc(char *str, int dec, int is_zero, int width);
+int hex2asc(char *str, int dec, int is_uppercase, int is_zero, int width);
 
 #endif // __MY_CLIB_H__
