@@ -156,7 +156,7 @@ int mouse_decode(struct MOUSE_DEC *mdec, unsigned char dat) {
     mdec->y   = mdec->buf[2];
 
     if ((mdec->buf[0] & 0x10) != 0) {
-      mdec->x != 0xffffff00;
+      mdec->x |= 0xffffff00;
     }
 
     if ((mdec->buf[0] & 0x20) != 0) {
