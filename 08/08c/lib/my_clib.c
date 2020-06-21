@@ -58,24 +58,40 @@ int my_sprintf(char *str, char *format, ...) {
 int dec2asc(char *str, int dec, int is_zero, int width) {
   int len = 0, len_buff;
   int buff[10];
+  int is_minus = FALSE;
 
+  if (dec < 0) {
+    /* two's complement */
+    dec = ~dec;
+    dec++;
+    is_minus = TRUE;
+  }
+
+  /* Set the number of digits to the variable len               */
+  /* Set the numerical value of each digit to the variable buff */
   for (;;) {
-    buff[len++] = dec % 10;
+    buff[len++] = dec % 10 + '0';
     if (dec < 10) break;
     dec /= 10;
   }
 
   if (is_zero) {
+    if (is_minus) width++;
     for (; len < width ;) {
-      buff[len++] = 0x00;
+      buff[len++] = '0';
+    }
+    if (is_minus) buff[len++] = '-';
+  } else {
+    if (is_minus) buff[len++] = '-';
+    for (; len < width ;) {
+      buff[len++] = ' ';
     }
   }
 
   len_buff = len;
 
   for (; len ;) {
-    --len;
-    *(str++) = buff[len] + 0x30;
+    *(str++) = buff[--len];
   }
 
   return len_buff;
