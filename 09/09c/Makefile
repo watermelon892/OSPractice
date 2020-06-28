@@ -89,7 +89,7 @@ $(TARGET_IMG): $(IPL_BIN) $(TARGET_SYS)
 	$(MCOPY) $(TARGET_SYS) -i $@ ::
 
 qemu:
-	$(QEMU) -fda $(TARGET_IMG)
+	$(QEMU) -m 32 -fda $(TARGET_IMG)
 
 clean:
 	rm -rf $(TARGET_DIR)
