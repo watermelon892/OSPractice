@@ -8,6 +8,10 @@
 
 ![template](https://github.com/watermelon892/OSPractice/blob/master/09/pic/09b.png)
 
+09d
+
+![template](https://github.com/watermelon892/OSPractice/blob/master/09/pic/09d.png)
+
 ## Usage
 
 ```
