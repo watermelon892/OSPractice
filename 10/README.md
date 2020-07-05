@@ -4,7 +4,7 @@
 
 ![template](https://github.com/watermelon892/OSPractice/blob/master/10/pic/10a.png)
 
-10b
+10b - 10d
 
 ![template](https://github.com/watermelon892/OSPractice/blob/master/10/pic/10b.png)
 
