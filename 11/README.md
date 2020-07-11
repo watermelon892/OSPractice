@@ -12,6 +12,10 @@
 
 ![template](https://github.com/watermelon892/OSPractice/blob/master/11/pic/11c.png)
 
+11d
+
+![template](https://github.com/watermelon892/OSPractice/blob/master/11/pic/11d.png)
+
 ## Usage
 
 ```
