@@ -40,8 +40,9 @@ void HariMain(void) {
   sht_back  = sheet_alloc(shtctl);
   sht_mouse = sheet_alloc(shtctl);
   sht_win   = sheet_alloc(shtctl);
-  buf_back  = (unsigned char *)memman_alloc_4k(memman,
-                                               binfo->scrnx * binfo->scrny);
+  buf_back  = (unsigned char *)memman_alloc_4k(
+                memman, binfo->scrnx * binfo->scrny
+              );
   buf_win   = (unsigned char *)memman_alloc_4k(memman, 160 * 68);
   sheet_setbuf(sht_back, buf_back, binfo->scrnx, binfo->scrny, -1);
   sheet_setbuf(sht_mouse, buf_mouse, 16, 16, 99);
@@ -96,9 +97,9 @@ void HariMain(void) {
           if ((mdec.btn & 0x04) != 0) {
             s[2] = 'C';
           }
-          boxfill8(buf_mouse, binfo->scrnx, COL8_008484,
+          boxfill8(buf_back, binfo->scrnx, COL8_008484,
                    32, 16, 32 + 15 * 8 -1, 31);
-          putfonts8_asc(buf_mouse, binfo->scrnx, 32, 16, COL8_FFFFFF, s);
+          putfonts8_asc(buf_back, binfo->scrnx, 32, 16, COL8_FFFFFF, s);
           boxfill8(binfo->vram, binfo->scrnx, COL8_008484,
                    mx, my, mx + 15, my + 15);
           sheet_refresh(sht_back, 32, 16, 32 + 15 * 8, 32);
