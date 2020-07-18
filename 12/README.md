@@ -6,7 +6,15 @@
 
 12b
 
+Increase by 100 per second
+
 ![template](https://github.com/watermelon892/OSPractice/blob/master/12/pic/12b.png)
+
+12c
+
+"10 [sec]" is displayed after 10 seconds
+
+![template](https://github.com/watermelon892/OSPractice/blob/master/12/pic/12c.png)
 
 ## Usage
 
