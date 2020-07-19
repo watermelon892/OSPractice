@@ -16,7 +16,7 @@ Increase by 100 per second
 
 ![template](https://github.com/watermelon892/OSPractice/blob/master/12/pic/12c.png)
 
-12d
+12d - 12e
 
 Multiple timers and blinking cursors
 
