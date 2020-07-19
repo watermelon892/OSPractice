@@ -1,0 +1,172 @@
+GAS LISTING /tmp/ccimRKij.s 			page 1
+
+
+   1              	# 1 "asm_src/ipl10.S"
+   1              	    /*
+   1              	...
+   0              	
+   0              	
+   1              	/* Copyright (C) 1991-2020 Free Software Foundation, Inc.
+   2              	    | nasm (nask) |  GAS        |
+   3              	    +-------------+-------------+
+   4              	    | DB          | .byte       |
+   5              	    | DW          | .word       |
+   6              	    | DD          | .int        |
+   7              	    | ORG         | -           |
+   8              	    | fresb       | .org        |
+   9              	    +-------------+-------------+
+  10              	    | JMP         | jmp         |
+  11              	    | MOV         | movw / movb |
+  12              	    | ADD         | add  / addw |
+  13              	    | CMP         | cmpw / cmpb |
+  14              	    | JE          | je          |
+  15              	    | JNC         | jnc         |
+  16              	    | JAE         | jae         |
+  17              	    | JB          | jb          |
+  18              	    | JBE         | jbe         |
+  19              	    | INT         | int         |
+  20              	    | HLT         | hlt         |
+  21              	    */
+  22              	
+  23              	    .code16 // Output 16-bit code on x86
+  24              	    .set CYLS, 10
+  25              	
+  26 0000 EB4E     	    jmp    entry
+  27 0002 90       	    .byte  0x90
+  28 0003 48454C4C 	    .ascii "HELLOIPL"
+  28      4F49504C 
+  29 000b 0002     	    .word  512
+  30 000d 01       	    .byte  1
+  31 000e 0100     	    .word  1
+  32 0010 02       	    .byte  2
+  33 0011 E000     	    .word  224
+  34 0013 400B     	    .word  2880
+  35 0015 F0       	    .byte  0xf0
+  36 0016 0900     	    .word  9
+  37 0018 1200     	    .word  18
+  38 001a 0200     	    .word  2
+  39 001c 00000000 	    .int   0
+  40 0020 400B0000 	    .int   2880
+  41 0024 000029   	    .byte  0, 0, 0x29
+  42 0027 FFFFFFFF 	    .int   0xffffffff
+  43 002b 48454C4C 	    .ascii "HELLO-OS   "
+  43      4F2D4F53 
+  43      202020
+  44 0036 46415431 	    .ascii "FAT12   "
+  44      32202020 
+  45 003e 00000000 	    .skip  18, 0
+  45      00000000 
+  45      00000000 
+  45      00000000 
+GAS LISTING /tmp/ccimRKij.s 			page 2
+
+
+  45      0000
+  46              	
+  47              	entry:
+  48              	    // Init Registers
+  49 0050 B80000   	    movw $0, %ax
+  50 0053 8ED0     	    movw %ax, %ss
+  51 0055 BC007C   	    movw $0x7c00, %sp
+  52 0058 8ED8     	    movw %ax, %ds
+  53              	
+  54              	    // Load Disk
+  55 005a B82008   	    movw $0x0820, %ax
+  56 005d 8EC0     	    movw %ax, %es
+  57 005f B500     	    movb $0, %ch     // Cylinder: 0
+  58 0061 B600     	    movb $0, %dh     // Head: 0
+  59 0063 B102     	    movb $2, %cl     // Sector: 2
+  60              	
+  61              	readloop:
+  62 0065 BE0000   	    movw $0, %si     // Register that counts the number of failures
+  63              	
+  64              	retry:
+  65 0068 B402     	    movb $0x02, %ah  // AH=0x02 Read Disk
+  66 006a B001     	    movb $1, %al     // 1 Sector
+  67 006c BB0000   	    movw $0, %bx
+  68 006f B200     	    movb $0x00, %dl  // A Drive
+  69 0071 CD13     	    int  $0x13       // Call Disk Bios
+  70 0073 7310     	    jnc  next
+  71              	
+  72 0075 83C601   	    addw $1, %si     // Add 1 to SI
+  73 0078 83FE05   	    cmpw $5, %si     // Compare SI and 5
+  74 007b 7332     	    jae  error       // IF SI >= 5 THEN error
+  75              	
+  76 007d B400     	    movb $0x00, %ah
+  77 007f B200     	    movb $0x00, %dl  // A Drive
+  78 0081 CD13     	    int  $0x13       // Reset Drive
+  79 0083 EBE3     	    jmp  retry
+  80              	
+  81              	next:
+  82 0085 8CC0     	    movw %es, %ax     // Advance address by 0x200
+  83 0087 83C020   	    add  $0x0020, %ax // ES * 16 + BX = 0x0020, 512 Byte, 1 Sector
+  84 008a 8EC0     	    movw %ax, %es     // Because 'add 0x020 %es' not exist.
+  85 008c 80C101   	    add  $1, %cl      // Add 1 to CL
+  86 008f 80F912   	    cmp  $18, %cl     // Compare CL and 18
+  87 0092 76D1     	    jbe  readloop     // IF CL <= 18 THEN readloop
+  88              	
+  89 0094 B101     	    movb $1, %cl      // Reset sector
+  90 0096 80C601   	    addb $1, %dh      // Next head
+  91 0099 80FE02   	    cmp  $2, %dh      // Compare DH and 2
+  92 009c 72C7     	    jb   readloop     // IF DH < 2 THEN readloop
+  93              	
+  94 009e B600     	    movb $0, %dh      // Rest head
+  95 00a0 80C501   	    addb $1, %ch      // Read to Cylinder CYLS
+  96 00a3 80FD0A   	    cmp  $CYLS, %ch   // Compare CH and CYLS
+  97 00a6 72BD     	    jb   readloop     // IF CH < CYLS THEN readloop
+  98              	
+  99              	    // Run haribote.sys
+ 100 00a8 882EF00F 	    movb %ch, (0x0ff0)
+ 101 00ac E90000   	    jmp  0xc200       // Jump to OS program
+GAS LISTING /tmp/ccimRKij.s 			page 3
+
+
+ 102              	
+ 103              	error:
+ 104 00af BE0000   	    movw $msg, %si
+ 105              	
+ 106              	putloop:
+ 107 00b2 8A04     	    movb (%si), %al
+ 108 00b4 83C601   	    addw $1, %si     // Add 1 to SI
+ 109 00b7 3C00     	    cmpb $0, %al
+ 110 00b9 7409     	    je   fin
+ 111 00bb B40E     	    movb $0x0e, %ah  // 1 character display function
+ 112 00bd BB0F00   	    movw $15, %bx    // Color code
+ 113 00c0 CD10     	    int  $0x10       // Call Video Bios
+ 114 00c2 EBEE     	    jmp  putloop
+ 115              	
+ 116              	fin:
+ 117              	    // Sleep
+ 118 00c4 F4       	    hlt
+ 119 00c5 EBFD     	    jmp fin
+ 120              	
+ 121              	msg:
+ 122 00c7 0A0A     	    .byte  0x0a, 0x0a
+ 123 00c9 6C6F6164 	    .ascii "load error"
+ 123      20657272 
+ 123      6F72
+ 124 00d3 0A       	    .byte  0x0a
+ 125 00d4 00       	    .byte  0
+ 126              	
+ 127 00d5 00000000 	    .org   0x1fe, 0
+ 127      00000000 
+ 127      00000000 
+ 127      00000000 
+ 127      00000000 
+ 128              	
+ 129 01fe 55AA     	    .byte  0x55, 0xaa
+GAS LISTING /tmp/ccimRKij.s 			page 4
+
+
+DEFINED SYMBOLS
+     asm_src/ipl10.S:24     *ABS*:000000000000000a CYLS
+     asm_src/ipl10.S:47     .text:0000000000000050 entry
+     asm_src/ipl10.S:61     .text:0000000000000065 readloop
+     asm_src/ipl10.S:64     .text:0000000000000068 retry
+     asm_src/ipl10.S:81     .text:0000000000000085 next
+     asm_src/ipl10.S:103    .text:00000000000000af error
+     asm_src/ipl10.S:121    .text:00000000000000c7 msg
+     asm_src/ipl10.S:106    .text:00000000000000b2 putloop
+     asm_src/ipl10.S:116    .text:00000000000000c4 fin
+
+NO UNDEFINED SYMBOLS

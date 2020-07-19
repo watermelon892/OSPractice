@@ -1,0 +1,197 @@
+GAS LISTING /tmp/ccNNxhO3.s 			page 1
+
+
+   1              	# 1 "asm_src/asmhead.S"
+   1              	    .text
+   1              	...
+   0              	
+   0              	
+   1              	/* Copyright (C) 1991-2020 Free Software Foundation, Inc.
+   2              	    .code16
+   3              	
+   4              	    .set BOTPAK,  0x00280000    // Load destination of bootpack
+   5              	    .set DSKCAC,  0x00100000    // Place of Disk cache
+   6              	    .set DSKCAC0, 0x00008000   // Place of Disk cache (Real Mode)
+   7              	
+   8              	    .set CYLS,  0x0ff0         // Set by boot sector
+   9              	    .set LEDS,  0x0ff1
+  10              	    .set VMODE, 0x0ff2         // Information about colors. N bit color?
+  11              	    .set SCRNX, 0x0ff4         // Display Resolution X
+  12              	    .set SCRNY, 0x0ff6         // Display Resolution Y
+  13              	    .set VRAM,  0x0ff8         // Start address of the graphic buffer
+  14              	
+  15              	    // Setting Video Mode
+  16 0000 B013     	    movb $0x13, %al            // VGA graphics. 320x200x8bit Color
+  17 0002 B400     	    movb $0x00, %ah
+  18 0004 CD10     	    int  $0x10
+  19              	
+  20 0006 C606F20F 	    movb $8, (VMODE)           // Save screen mode
+  20      08
+  21 000b C706F40F 	    movw $320, (SCRNX)
+  21      4001
+  22 0011 C706F60F 	    movw $200, (SCRNY)
+  22      C800
+  23 0017 66C706F8 	    movl $0x000a0000, (VRAM)
+  23      0F00000A 
+  23      00
+  24              	
+  25              	    // Get keyboard led status from BIOS
+  26 0020 B402     	    movb $0x02, %ah
+  27 0022 CD16     	    int  $0x16                 // Keyboard BIOS
+  28 0024 A2F10F   	    movb %al, (LEDS)
+  29              	
+  30              	    // Prevent PIC from accepting interrupts
+  31              	
+  32 0027 B0FF     	    movb $0xff, %al
+  33 0029 E621     	    outb %al, $0x21
+  34 002b 90       	    nop
+  35 002c E6A1     	    outb %al, $0xa1
+  36              	
+  37 002e FA       	    cli
+  38              	
+  39              	    // Setting A20GATE
+  40              	    // Allow the CPU to access more than 1MB of memory
+  41              	
+  42 002f E8B500   	    call waitkbdout
+  43 0032 B0D1     	    movb $0xd1, %al
+  44 0034 E664     	    outb %al, $0x64
+  45 0036 E8AE00   	    call waitkbdout
+  46 0039 B0DF     	    movb $0xdf, %al            // Enable A20
+  47 003b E660     	    outb %al, $0x60
+GAS LISTING /tmp/ccNNxhO3.s 			page 2
+
+
+  48 003d E8A700   	    call waitkbdout
+  49              	
+  50              	    // Protect Mode
+  51              	
+  52              	    .arch i486                 // I want to use instructions up to 486
+  53              	
+  54 0040 0F011600 	    lgdt (GDTR0)               // Provisionally set GDT
+  54      00
+  55 0045 0F20C0   	    movl %cr0, %eax
+  56 0048 6625FFFF 	    andl $0x7fffffff, %eax     // Set BIT31 to 0 (To prohibit paging)
+  56      FF7F
+  57 004e 6683C801 	    orl  $0x00000001, %eax     // Set BIT0 to 1 (To enter protected mode)
+  58 0052 0F22C0   	    movl %eax, %cr0
+  59 0055 EB00     	    jmp  pipelineflush
+  60              	
+  61              	pipelineflush:
+  62 0057 B80800   	    movw $1*8, %ax
+  63 005a 8ED8     	    movw %ax, %ds
+  64 005c 8EC0     	    movw %ax, %es
+  65 005e 8EE0     	    movw %ax, %fs
+  66 0060 8EE8     	    movw %ax, %gs
+  67 0062 8ED0     	    movw %ax, %ss
+  68              	
+  69              	    // bootpack transfer
+  70 0064 66BE0000 	    movl $bootpack, %esi
+  70      0000
+  71 006a 66BF0000 	    movl $BOTPAK, %edi
+  71      2800
+  72 0070 66B90000 	    movl $512*1024/4, %ecx
+  72      0200
+  73 0076 E87700   	    call memcpy
+  74              	
+  75              	    // Boot Sector
+  76 0079 66BE007C 	    movl $0x7c00, %esi
+  76      0000
+  77 007f 66BF0000 	    movl $DSKCAC, %edi
+  77      1000
+  78 0085 66B98000 	    movl $512/4, %ecx
+  78      0000
+  79 008b E86200   	    call memcpy
+  80              	
+  81 008e 66BE0082 	    movl  $DSKCAC0+512, %esi
+  81      0000
+  82 0094 66BF0002 	    movl  $DSKCAC+512, %edi
+  82      1000
+  83 009a 66B90000 	    movl  $0, %ecx
+  83      0000
+  84 00a0 8A0EF00F 	    movb  (CYLS), %cl
+  85 00a4 6669C900 	    imull $512*18*2/4, %ecx
+  85      120000
+  86 00ab 6681E980 	    sub   $512/4, %ecx
+  86      000000
+  87 00b2 E83B00   	    call  memcpy
+  88              	
+  89              	    // Boot Pack Startup
+  90              	
+  91 00b5 66BB0000 	    movl $BOTPAK, %ebx
+GAS LISTING /tmp/ccNNxhO3.s 			page 3
+
+
+  91      2800
+  92 00bb 67668B4B 	    movl 16(%ebx), %ecx
+  92      10
+  93 00c0 6683C103 	    add  $3, %ecx
+  94 00c4 66C1E902 	    shr  $2, %ecx
+  95 00c8 7410     	    jz   skip
+  96 00ca 67668B73 	    movl 20(%ebx), %esi
+  96      14
+  97 00cf 6601DE   	    add  %ebx, %esi
+  98 00d2 67668B7B 	    movl 12(%ebx), %edi
+  98      0C
+  99 00d7 E81600   	    call memcpy
+ 100              	
+ 101              	skip:
+ 102 00da 67668B63 	    mov   12(%ebx), %esp
+ 102      0C
+ 103 00df 66EA1B00 	    ljmpl $2*8, $0x0000001b
+ 103      00001000 
+ 104              	
+ 105              	waitkbdout:
+ 106 00e7 E464     	    inb  $0x64, %al
+ 107 00e9 2402     	    andb $0x02, %al
+ 108 00eb E460     	    inb  $0x60, %al
+ 109 00ed 75F8     	    jnz  waitkbdout
+ 110 00ef C3       	    ret
+ 111              	
+ 112              	memcpy:
+ 113 00f0 67668B06 	    movl (%esi), %eax
+ 114 00f4 6683C604 	    add  $4, %esi
+ 115 00f8 67668907 	    movl %eax, (%edi)
+ 116 00fc 6683C704 	    add  $4, %edi
+ 117 0100 6683E901 	    sub  $1, %ecx
+ 118 0104 75EA     	    jnz  memcpy
+ 119 0106 C3       	    ret
+ 120              	
+ 121 0107 8DB40000 	    .align 16
+ 121      8DB40000 
+ 121      90
+ 122              	GDT0:
+ 123 0110 00000000 	    .skip 8, 0x00
+ 123      00000000 
+ 124 0118 FFFF0000 	    .word 0xffff, 0x0000, 0x9200, 0x00cf
+ 124      0092CF00 
+ 125 0120 FFFF0000 	    .word 0xffff, 0x0000, 0x9a28, 0x0047
+ 125      289A4700 
+ 126 0128 0000     	    .word 0x0000
+ 127              	
+ 128              	GDTR0:
+ 129 012a 1700     	    .word 8*3-1
+ 130 012c 00000000 	    .int  GDT0
+ 131              	
+ 132              	bootpack:
+GAS LISTING /tmp/ccNNxhO3.s 			page 4
+
+
+DEFINED SYMBOLS
+   asm_src/asmhead.S:4      *ABS*:0000000000280000 BOTPAK
+   asm_src/asmhead.S:5      *ABS*:0000000000100000 DSKCAC
+   asm_src/asmhead.S:6      *ABS*:0000000000008000 DSKCAC0
+   asm_src/asmhead.S:8      *ABS*:0000000000000ff0 CYLS
+   asm_src/asmhead.S:9      *ABS*:0000000000000ff1 LEDS
+   asm_src/asmhead.S:10     *ABS*:0000000000000ff2 VMODE
+   asm_src/asmhead.S:11     *ABS*:0000000000000ff4 SCRNX
+   asm_src/asmhead.S:12     *ABS*:0000000000000ff6 SCRNY
+   asm_src/asmhead.S:13     *ABS*:0000000000000ff8 VRAM
+   asm_src/asmhead.S:105    .text:00000000000000e7 waitkbdout
+   asm_src/asmhead.S:128    .text:000000000000012a GDTR0
+   asm_src/asmhead.S:61     .text:0000000000000057 pipelineflush
+   asm_src/asmhead.S:132    .text:0000000000000130 bootpack
+   asm_src/asmhead.S:112    .text:00000000000000f0 memcpy
+   asm_src/asmhead.S:101    .text:00000000000000da skip
+   asm_src/asmhead.S:122    .text:0000000000000110 GDT0
+
+NO UNDEFINED SYMBOLS

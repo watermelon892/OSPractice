@@ -1,0 +1,289 @@
+GAS LISTING /tmp/cc8QN8Cv.s 			page 1
+
+
+   1              	# 1 "asm_src/asmfunc.S"
+   1              	    .arch i486
+   1              	...
+   0              	
+   0              	
+   1              	/* Copyright (C) 1991-2020 Free Software Foundation, Inc.
+   2              	
+   3              	    .text
+   4              	
+   5              	    // Function name included in this program
+   6              	    .global io_hlt, io_cli, io_sti, io_stihlt
+   7              	    .global io_in8, io_in16, io_in32
+   8              	    .global io_out8, io_out16, io_out32
+   9              	    .global io_load_eflags, io_store_eflags
+  10              	    .global load_gdtr, load_idtr
+  11              	    .global load_cr0, store_cr0
+  12              	    .global asm_inthandler20, asm_inthandler21
+  13              	    .global asm_inthandler27, asm_inthandler2c
+  14              	    .global memtest_sub
+  15              	
+  16              	    .extern inthandler21, inthandler27, inthandler2c
+  17              	
+  18              	// void _io_hlt(void)
+  19              	io_hlt:
+  20 0000 F4       	    hlt
+  21 0001 C3       	    ret
+  22              	
+  23              	// void io_cli(void)
+  24              	io_cli:
+  25 0002 FA       	    cli
+  26 0003 C3       	    ret
+  27              	
+  28              	// void io_sti(void)
+  29              	io_sti:
+  30 0004 FB       	    sti
+  31 0005 C3       	    ret
+  32              	
+  33              	// void io_stihlt(void)
+  34              	io_stihlt:
+  35 0006 FB       	    sti
+  36 0007 F4       	    hlt
+  37 0008 C3       	    ret
+  38              	
+  39              	// int io_in8(int port)
+  40              	io_in8:
+  41 0009 8B542404 	    movl 4(%esp), %edx  // port
+  42 000d B8000000 	    movl $0, %eax
+  42      00
+  43 0012 EC       	    inb  %dx, %al
+  44 0013 C3       	    ret
+  45              	
+  46              	// int io_in16(int port)
+  47              	io_in16:
+  48 0014 8B542404 	    movl 4(%esp), %edx  // port
+  49 0018 B8000000 	    movl $0, %eax
+  49      00
+  50 001d 66ED     	    inw  %dx, %ax
+GAS LISTING /tmp/cc8QN8Cv.s 			page 2
+
+
+  51 001f C3       	    ret
+  52              	
+  53              	// int io_int32(int port)
+  54              	io_in32:
+  55 0020 8B542404 	    movl 4(%esp), %edx  // port
+  56 0024 ED       	    inl  %dx, %eax
+  57 0025 C3       	    ret
+  58              	
+  59              	// int io_out8(int port, int data)
+  60              	io_out8:
+  61 0026 8B542404 	    movl 4(%esp), %edx  // port
+  62 002a 8A442408 	    movb 8(%esp), %al   // data
+  63 002e EE       	    outb %al, %dx
+  64 002f C3       	    ret
+  65              	
+  66              	// int io_out16(int port, int data)
+  67              	in_out16:
+  68 0030 8B542404 	    movl 4(%esp), %edx  // port
+  69 0034 8B442408 	    movl 8(%esp), %eax  // data
+  70 0038 66EF     	    outw %ax, %dx
+  71 003a C3       	    ret
+  72              	
+  73              	// int io_out32(int port, int data)
+  74              	in_out32:
+  75 003b 8B542404 	    movl 4(%esp), %edx  // port
+  76 003f 8B442408 	    movl 8(%esp), %eax  // data
+  77 0043 EF       	    outl %eax, %dx
+  78 0044 C3       	    ret
+  79              	
+  80              	// int io_load_eflags(void)
+  81              	io_load_eflags:
+  82 0045 9C       	    pushf  // PUSH EFLAGS
+  83 0046 58       	    pop %eax
+  84 0047 C3       	    ret
+  85              	
+  86              	// int io_store_eflags(int eflags)
+  87              	io_store_eflags:
+  88 0048 8B442404 	    movl 4(%esp), %eax
+  89 004c 50       	    push %eax
+  90 004d 9D       	    popf   // POP EFLAGS
+  91 004e C3       	    ret
+  92              	
+  93              	// void load_gdtr(int limit, int addr)
+  94              	load_gdtr:
+  95 004f 668B4424 	    movw 4(%esp), %ax  // limit
+  95      04
+  96 0054 66894424 	    movw %ax, 6(%esp)
+  96      06
+  97 0059 0F015424 	    lgdt 6(%esp)
+  97      06
+  98 005e C3       	    ret
+  99              	
+ 100              	// void load_idtr(int limit, int addr)
+ 101              	load_idtr:
+ 102 005f 668B4424 	    movw 4(%esp), %ax  // limit
+ 102      04
+ 103 0064 66894424 	    movw %ax, 6(%esp)
+GAS LISTING /tmp/cc8QN8Cv.s 			page 3
+
+
+ 103      06
+ 104 0069 0F015C24 	    lidt 6(%esp)
+ 104      06
+ 105 006e C3       	    ret
+ 106              	
+ 107              	// int load_cr0(void)
+ 108              	load_cr0:
+ 109 006f 0F20C0   	    movl %cr0, %eax
+ 110 0072 C3       	    ret
+ 111              	
+ 112              	// void store_cr0(int cr0)
+ 113              	store_cr0:
+ 114 0073 8B442404 	    movl 4(%esp), %eax
+ 115 0077 0F22C0   	    movl %eax, %cr0
+ 116 007a C3       	    ret
+ 117              	
+ 118              	// void asm_inthandler20(void)
+ 119              	asm_inthandler20:
+ 120 007b 06       	    push %es
+ 121 007c 1E       	    push %ds
+ 122 007d 60       	    pusha
+ 123 007e 89E0     	    movl %esp, %eax
+ 124 0080 50       	    push %eax
+ 125 0081 668CD0   	    movw %ss, %ax
+ 126 0084 8ED8     	    movw %ax, %ds
+ 127 0086 8EC0     	    movw %ax, %es
+ 128 0088 E8FCFFFF 	    call inthandler20
+ 128      FF
+ 129 008d 58       	    pop  %eax
+ 130 008e 61       	    popa
+ 131 008f 1F       	    pop  %ds
+ 132 0090 07       	    pop  %es
+ 133 0091 CF       	    iret
+ 134              	
+ 135              	// void asm_inthandler21(void)
+ 136              	asm_inthandler21:
+ 137 0092 06       	    push %es
+ 138 0093 1E       	    push %ds
+ 139 0094 60       	    pusha
+ 140 0095 89E0     	    movl %esp, %eax
+ 141 0097 50       	    push %eax
+ 142 0098 668CD0   	    movw %ss, %ax
+ 143 009b 8ED8     	    movw %ax, %ds
+ 144 009d 8EC0     	    movw %ax, %es
+ 145 009f E8FCFFFF 	    call inthandler21
+ 145      FF
+ 146 00a4 58       	    pop  %eax
+ 147 00a5 61       	    popa
+ 148 00a6 1F       	    pop  %ds
+ 149 00a7 07       	    pop  %es
+ 150 00a8 CF       	    iret
+ 151              	
+ 152              	// void asm_inthandler27(void)
+ 153              	asm_inthandler27:
+ 154 00a9 06       	    push %es
+ 155 00aa 1E       	    push %ds
+ 156 00ab 60       	    pusha
+GAS LISTING /tmp/cc8QN8Cv.s 			page 4
+
+
+ 157 00ac 89E0     	    movl %esp, %eax
+ 158 00ae 50       	    push %eax
+ 159 00af 668CD0   	    movw %ss, %ax
+ 160 00b2 8ED8     	    movw %ax, %ds
+ 161 00b4 8EC0     	    movw %ax, %es
+ 162 00b6 E8FCFFFF 	    call inthandler27
+ 162      FF
+ 163 00bb 58       	    pop  %eax
+ 164 00bc 61       	    popa
+ 165 00bd 1F       	    pop  %ds
+ 166 00be 07       	    pop  %es
+ 167 00bf CF       	    iret
+ 168              	
+ 169              	// void asm_inthandler2c(void)
+ 170              	asm_inthandler2c:
+ 171 00c0 06       	    push %es
+ 172 00c1 1E       	    push %ds
+ 173 00c2 60       	    pusha
+ 174 00c3 89E0     	    movl %esp, %eax
+ 175 00c5 50       	    push %eax
+ 176 00c6 668CD0   	    movw %ss, %ax
+ 177 00c9 8ED8     	    movw %ax, %ds
+ 178 00cb 8EC0     	    movw %ax, %es
+ 179 00cd E8FCFFFF 	    call inthandler2c
+ 179      FF
+ 180 00d2 58       	    pop  %eax
+ 181 00d3 61       	    popa
+ 182 00d4 1F       	    pop  %ds
+ 183 00d5 07       	    pop  %es
+ 184 00d6 CF       	    iret
+ 185              	
+ 186              	// unsigned int memtest_sub(unsigned int start, unsigned int end)
+ 187              	memtest_sub:
+ 188 00d7 57       	    push %edi // I also want to use EBX, ESI, and EDI
+ 189 00d8 56       	    push %esi
+ 190 00d9 53       	    push %ebx
+ 191 00da BE55AA55 	    movl $0xaa55aa55, %esi   // pat0 = 0xaa55aa55
+ 191      AA
+ 192 00df BFAA55AA 	    movl $0x55aa55aa, %edi   // pat1 = 0x55aa55aa
+ 192      55
+ 193 00e4 8B442410 	    movl 12 + 4(%esp), %eax  // i = start
+ 194              	mts_loop:
+ 195 00e8 89C3     	    movl %eax, %ebx
+ 196 00ea 81C3FC0F 	    addl $0xffc, %ebx        // p = i + 0xffc
+ 196      0000
+ 197 00f0 8B13     	    movl (%ebx), %edx        // old = *p
+ 198 00f2 8933     	    movl %esi, (%ebx)        // *p = pat0
+ 199 00f4 8333FF   	    xorl $0xffffffff, (%ebx) // *p ^= 0xffffffff
+ 200 00f7 3B3B     	    cmpl (%ebx), %edi        // if (*p == pat1) goto mts_fin
+ 201 00f9 7518     	    jne  mts_fin
+ 202 00fb 8333FF   	    xorl $0xffffffff, (%ebx) // *p ^= 0xffffffff
+ 203 00fe 3B33     	    cmpl (%ebx), %esi        // if (*p != pat0) goto mts_fin
+ 204 0100 7511     	    jne  mts_fin
+ 205 0102 8913     	    movl %edx, (%ebx)        // *p = old
+ 206 0104 05001000 	    addl $0x1000, %eax       // i += 0x1000
+ 206      00
+ 207 0109 3B442414 	    cmpl 12 + 8(%esp), %eax  // if (i <= end) goto mts_loop
+GAS LISTING /tmp/cc8QN8Cv.s 			page 5
+
+
+ 208 010d 76D9     	    jbe  mts_loop
+ 209 010f 5B       	    pop  %ebx
+ 210 0110 5E       	    pop  %esi
+ 211 0111 5F       	    pop  %edi
+ 212 0112 C3       	    ret
+ 213              	mts_fin:
+ 214 0113 8913     	    movl %edx, (%ebx)        // *p = old
+ 215 0115 5B       	    pop  %ebx
+ 216 0116 5E       	    pop  %esi
+ 217 0117 5F       	    pop  %edi
+ 218 0118 C3       	    ret
+GAS LISTING /tmp/cc8QN8Cv.s 			page 6
+
+
+DEFINED SYMBOLS
+   asm_src/asmfunc.S:19     .text:0000000000000000 io_hlt
+   asm_src/asmfunc.S:24     .text:0000000000000002 io_cli
+   asm_src/asmfunc.S:29     .text:0000000000000004 io_sti
+   asm_src/asmfunc.S:34     .text:0000000000000006 io_stihlt
+   asm_src/asmfunc.S:40     .text:0000000000000009 io_in8
+   asm_src/asmfunc.S:47     .text:0000000000000014 io_in16
+   asm_src/asmfunc.S:54     .text:0000000000000020 io_in32
+   asm_src/asmfunc.S:60     .text:0000000000000026 io_out8
+   asm_src/asmfunc.S:81     .text:0000000000000045 io_load_eflags
+   asm_src/asmfunc.S:87     .text:0000000000000048 io_store_eflags
+   asm_src/asmfunc.S:94     .text:000000000000004f load_gdtr
+   asm_src/asmfunc.S:101    .text:000000000000005f load_idtr
+   asm_src/asmfunc.S:108    .text:000000000000006f load_cr0
+   asm_src/asmfunc.S:113    .text:0000000000000073 store_cr0
+   asm_src/asmfunc.S:119    .text:000000000000007b asm_inthandler20
+   asm_src/asmfunc.S:136    .text:0000000000000092 asm_inthandler21
+   asm_src/asmfunc.S:153    .text:00000000000000a9 asm_inthandler27
+   asm_src/asmfunc.S:170    .text:00000000000000c0 asm_inthandler2c
+   asm_src/asmfunc.S:187    .text:00000000000000d7 memtest_sub
+   asm_src/asmfunc.S:67     .text:0000000000000030 in_out16
+   asm_src/asmfunc.S:74     .text:000000000000003b in_out32
+   asm_src/asmfunc.S:194    .text:00000000000000e8 mts_loop
+   asm_src/asmfunc.S:213    .text:0000000000000113 mts_fin
+
+UNDEFINED SYMBOLS
+io_out16
+io_out32
+inthandler20
+inthandler21
+inthandler27
+inthandler2c
