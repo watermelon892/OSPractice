@@ -89,7 +89,6 @@ void HariMain(void) {
 
   for (;;) {
     count++;
-    my_sprintf(s, "%d", count);
 
     io_cli();
     if (fifo8_status(&keyfifo)
