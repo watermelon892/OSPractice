@@ -62,9 +62,8 @@ void HariMain(void) {
   sht_back  = sheet_alloc(shtctl);
   sht_mouse = sheet_alloc(shtctl);
   sht_win   = sheet_alloc(shtctl);
-  buf_back  = (unsigned char *)memman_alloc_4k(
-                memman, binfo->scrnx * binfo->scrny
-              );
+  buf_back  = (unsigned char *)memman_alloc_4k(memman,
+                                               binfo->scrnx * binfo->scrny);
   buf_win   = (unsigned char *)memman_alloc_4k(memman, 160 * 52);
   sheet_setbuf(sht_back, buf_back, binfo->scrnx, binfo->scrny, -1);
   sheet_setbuf(sht_mouse, buf_mouse, 16, 16, 99);
@@ -90,6 +89,7 @@ void HariMain(void) {
 
   for (;;) {
     count++;
+    my_sprintf(s, "%d", count);
 
     io_cli();
     if (fifo8_status(&keyfifo)

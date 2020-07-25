@@ -18,6 +18,7 @@ void init_pit(void) {
 
   timerctl.count = 0;
   timerctl.next  = 0xffffffff; // Because at first there is no timer running
+  timerctl.using = 0;
 
   for (int i = 0; i < MAX_TIMER; i++) {
     timerctl.timers0[i].flags = 0;
@@ -85,8 +86,6 @@ void inthandler20(int *esp) {
   timerctl.count++;
 
   if (timerctl.next > timerctl.count) return;
-
-  timerctl.next = 0xffffffff;
 
   for (i = 0; i < timerctl.using; i++) {
     /* Not check "flags" because all timers in "timers" are running */
