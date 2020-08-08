@@ -34,6 +34,10 @@ Confirm that Task B is running by displaying the counter in Task B.
 
 ![template](https://github.com/watermelon892/OSPractice/blob/master/15_MultiTask1/pic/15f.png)
 
+15g
+
+![template](https://github.com/watermelon892/OSPractice/blob/master/15_MultiTask1/pic/15g.png)
+
 ## Usage
 
 ```
