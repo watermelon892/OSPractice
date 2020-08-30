@@ -16,6 +16,10 @@
 
 ![template](https://github.com/watermelon892/OSPractice/blob/master/17_Console/pic/17d.png)
 
+17e
+
+![template](https://github.com/watermelon892/OSPractice/blob/master/17_Console/pic/17e.png)
+
 ## Usage
 
 ```
