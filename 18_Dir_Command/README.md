@@ -12,6 +12,10 @@
 
 ![template](https://github.com/watermelon892/OSPractice/blob/master/18_Dir_Command/pic/18c.png)
 
+18d
+
+![template](https://github.com/watermelon892/OSPractice/blob/master/18_Dir_Command/pic/18d.png)
+
 ## Usage
 
 ```
