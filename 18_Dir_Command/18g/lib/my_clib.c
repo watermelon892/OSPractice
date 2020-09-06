@@ -1,5 +1,59 @@
 #include "my_clib.h"
 
+int num2asc(char *str, int num, int radix,
+            int is_uppercase, int is_zero, int width) {
+  int len = 0, digit = 0, is_minus = 0;
+  char buf[256] = "";
+
+  if (num < 0) {
+    num = ~num;
+    num++;
+    is_minus = 1;
+  }
+
+  for (;;) {
+    digit = num % radix;
+
+    if (radix == 2 || radix == 8 || radix == 10) {
+      buf[len++] = digit + '0';
+    } else if (radix == 16) {
+      if (digit < 10) {
+        buf[len++] = digit + '0';
+      } else {
+        if (is_uppercase) {
+          buf[len++] = digit - 10 + 'A';
+        } else {
+          buf[len++] = digit - 10 + 'a';
+        }
+      }
+    } else {
+      return -1;
+    }
+
+    if (num < radix) {
+      if (len < width) {
+        for (; len < width ;) {
+          if (is_zero) {
+            buf[len++] = '0';
+          } else {
+            buf[len++] = ' ';
+          }
+        }
+      }
+      if (is_minus) buf[len++] = '-';
+      break;
+    }
+
+    num /= radix;
+  }
+
+  for (int i = len - 1; 0 <= i; i--) {
+    *(str++) = buf[i];
+  }
+
+  return len;
+}
+
 int my_sprintf(char *str, char *format, ...) {
   va_list args;
   int size = 0;
@@ -26,13 +80,14 @@ int my_sprintf(char *str, char *format, ...) {
 
       switch (*format) {
       case 'd':
-        size = dec2asc(str, va_arg(args, int), is_zero, width);
+        size = num2asc(str, va_arg(args, int), 10, FALSE, is_zero, width);
         break;
       case 'x':
-        size = hex2asc(str, va_arg(args, int), FALSE, is_zero, width);
+        size = num2asc(str, va_arg(args, int), 16, FALSE, is_zero, width);
         break;
       case 'X':
-        size = hex2asc(str, va_arg(args, int), TRUE, is_zero, width);
+        size = num2asc(str, va_arg(args, int), 16, TRUE, is_zero, width);
+        break;
       default:
         len++;
         break;
@@ -53,84 +108,6 @@ int my_sprintf(char *str, char *format, ...) {
   va_end(args);
 
   return len;
-}
-
-int dec2asc(char *str, int dec, int is_zero, int width) {
-  int len = 0, len_buff;
-  int buff[10];
-  int is_minus = FALSE;
-
-  if (dec < 0) {
-    /* two's complement */
-    dec = ~dec;
-    dec++;
-    is_minus = TRUE;
-  }
-
-  /* Set the number of digits to the variable len               */
-  /* Set the numerical value of each digit to the variable buff */
-  for (;;) {
-    buff[len++] = dec % 10 + '0';
-    if (dec < 10) break;
-    dec /= 10;
-  }
-
-  if (is_zero) {
-    if (is_minus) width++;
-    for (; len < width ;) {
-      buff[len++] = '0';
-    }
-    if (is_minus) buff[len++] = '-';
-  } else {
-    if (is_minus) buff[len++] = '-';
-    for (; len < width ;) {
-      buff[len++] = ' ';
-    }
-  }
-
-  len_buff = len;
-
-  for (; len ;) {
-    *(str++) = buff[--len];
-  }
-
-  return len_buff;
-}
-
-int hex2asc(char *str, int dec, int is_uppercase, int is_zero, int width) {
-  int len = 0, len_buff, base;
-  int buff[10];
-
-  if (is_uppercase) {
-    base = 0x40;
-  } else {
-    base = 0x60;
-  }
-
-  for (;;) {
-    buff[len++] = dec % 16;
-    if (dec < 16) break;
-    dec /= 16;
-  }
-
-  if (is_zero) {
-    for (; len < width ;) {
-      buff[len++] = 0x00;
-    }
-  }
-
-  len_buff = len;
-
-  for (; len ;) {
-    len--;
-    if (buff[len] < 10) {
-      *(str++) = buff[len] + 0x30;
-    } else {
-      *(str++) = buff[len] - 9 + base;
-    }
-  }
-
-  return len_buff;
 }
 
 int my_strcmp(char *str1, char *str2) {
