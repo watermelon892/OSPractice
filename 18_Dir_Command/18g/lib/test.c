@@ -1,12 +1,40 @@
 #include "my_clib.h"
 #include <stdio.h>
 
+int tests_count = 0;
+int ok_count    = 0;
+int ng_count    = 0;
+
+void check(int ret);
+void my_strcmp_test();
+void my_sprintf_test();
+
+int main() {
+  printf("\n# My CLIB Test Start!!\n\n");
+
+  my_strcmp_test();
+  my_sprintf_test();
+
+  printf("# My CLIB Test End!!\n\n");
+
+  printf("#################### Results ####################\n");
+  printf("# All Tests : %d\n", tests_count);
+  printf("# OK        : %d\n", ok_count);
+  printf("# NG        : %d\n", ng_count);
+  printf("#################################################\n");
+
+  return 0;
+}
+
 void check(int ret) {
+  tests_count += 1;
   printf("Result: ");
   if (ret) {
+    ok_count += 1;
     printf("\x1b[32m"); // Color: Green
     printf("OK\n");
   } else {
+    ng_count += 1;
     printf("\x1b[31m"); // Color: Red
     printf("NG\n");
   }
@@ -88,14 +116,4 @@ void my_sprintf_test() {
   check(my_strcmp(str, "0A") == 0);
 
   printf("\n## my_sprintf Test End!!\n\n");
-}
-
-int main() {
-  printf("\n# My CLIB Test Start!!\n\n");
-
-  my_strcmp_test();
-  my_sprintf_test();
-
-  printf("# My CLIB Test End!!\n");
-  return 0;
 }
