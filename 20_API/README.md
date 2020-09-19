@@ -16,6 +16,10 @@
 
 ![template](https://github.com/watermelon892/OSPractice/blob/master/20_API/pic/20f.png)
 
+20g
+
+![template](https://github.com/watermelon892/OSPractice/blob/master/20_API/pic/20g.png)
+
 ## Usage
 
 ```
