@@ -46,11 +46,13 @@ C_OBJS += $(TARGET_DIR)/file.o
 
 APP_DIR        = app
 APP_TARGET_DIR = app_target
-HELLO_APP      = $(APP_TARGET_DIR)/hello.hrb
-HELLO2_APP     = $(APP_TARGET_DIR)/hello2.hrb
 APP_LNK        = $(APP_DIR)/app.ld
 A_OBJ          = $(APP_TARGET_DIR)/a.o
 A_ASM_OBJ      = $(APP_TARGET_DIR)/a_asm.o
+HELLO3_OBJ     = $(APP_TARGET_DIR)/hello3.o
+HELLO_APP      = $(APP_TARGET_DIR)/hello.hrb
+HELLO2_APP     = $(APP_TARGET_DIR)/hello2.hrb
+HELLO3_APP     = $(APP_TARGET_DIR)/hello3.hrb
 A_APP          = $(APP_TARGET_DIR)/a.hrb
 
 CAT     = cat
@@ -104,7 +106,11 @@ $(APP_TARGET_DIR)/%.o: $(APP_DIR)/%.c
 
 $(A_APP): $(A_ASM_OBJ) $(A_OBJ)
 	$(MKDIR) -p $(APP_TARGET_DIR)
-	$(LD) $(LFLAGS) -o $@ $(APP_FLAGS) -T $(APP_LNK) $(A_ASM_OBJ) $(A_OBJ)
+	$(LD) $(LFLAGS) -o $@ $(APP_FLAGS) -T $(APP_LNK) $^
+
+$(HELLO3_APP): $(A_ASM_OBJ) $(HELLO3_OBJ)
+	$(MKDIR) -p $(APP_TARGET_DIR)
+	$(LD) $(LFLAGS) -o $@ $(APP_FLAGS) -T $(APP_LNK) $^
 
 $(APP_TARGET_DIR)/%.hrb: $(APP_TARGET_DIR)/%.o
 	$(MKDIR) -p $(APP_TARGET_DIR)
@@ -121,7 +127,7 @@ $(BOOTPACK_BIN): $(C_OBJS) $(ASMFUNC_OBJ) $(FONT_BIN) $(MY_CLIB_OBJ)
 $(TARGET_SYS): $(ASMHEAD_BIN) $(BOOTPACK_BIN)
 	$(CAT) $^ > $@
 
-$(TARGET_IMG): $(IPL_BIN) $(TARGET_SYS) $(HELLO_APP) $(HELLO2_APP) $(A_APP)
+$(TARGET_IMG): $(IPL_BIN) $(TARGET_SYS) $(HELLO_APP) $(HELLO2_APP) $(A_APP) $(HELLO3_APP)
     # Create image, place IPL in boot sector
 	$(MFORMAT) -f 1440 -B $(IPL_BIN) -C -i $@ ::
     # Copy OS program to image
@@ -130,6 +136,7 @@ $(TARGET_IMG): $(IPL_BIN) $(TARGET_SYS) $(HELLO_APP) $(HELLO2_APP) $(A_APP)
 	$(MCOPY) testfile.txt  -i $(TARGET_IMG) ::
 	$(MCOPY) $(HELLO_APP)  -i $(TARGET_IMG) ::
 	$(MCOPY) $(HELLO2_APP) -i $(TARGET_IMG) ::
+	$(MCOPY) $(HELLO3_APP) -i $(TARGET_IMG) ::
 	$(MCOPY) $(A_APP)      -i $(TARGET_IMG) ::
 
 qemu:

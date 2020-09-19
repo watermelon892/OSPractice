@@ -214,7 +214,7 @@ void cmd_dir(struct CONSOLE *cons) {
     if (finfo[i].name[0] == 0x00) break;
     if (finfo[i].name[0] != 0xe5) {
       if ((finfo[i].type & 0x18) == 0) {
-        my_sprintf(s, "filename.ext   %7d", finfo[i].size);
+        my_sprintf(s, "filename.ext   %7d\n", finfo[i].size);
         for (int j = 0; j < 8; j++) {
           s[j] = finfo[i].name[j];
         }
