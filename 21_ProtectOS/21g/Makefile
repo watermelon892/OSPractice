@@ -46,16 +46,25 @@ C_OBJS += $(TARGET_DIR)/file.o
 
 APP_DIR        = app
 APP_TARGET_DIR = app_target
-APP_LNK        = $(APP_DIR)/app.ld
+APP_LNK        = $(APP_DIR)/linker/app.ld
+APP_LIB_SRC    = $(APP_DIR)/lib/applib.S
+A_SRC          = $(APP_DIR)/a/a.c
+HELLO_SRC      = $(APP_DIR)/hello/hello.S
+HELLO2_SRC     = $(APP_DIR)/hello2/hello2.S
+HELLO3_SRC     = $(APP_DIR)/hello3/hello3.c
+CRACK1_SRC     = $(APP_DIR)/crack1/crack1.c
+CRACK2_SRC     = $(APP_DIR)/crack2/crack2.S
+APP_LIB_OBJ    = $(APP_TARGET_DIR)/applib.o
 A_OBJ          = $(APP_TARGET_DIR)/a.o
-A_ASM_OBJ      = $(APP_TARGET_DIR)/a_asm.o
+HELLO_OBJ      = $(APP_TARGET_DIR)/hello.o
+HELLO2_OBJ     = $(APP_TARGET_DIR)/hello2.o
 HELLO3_OBJ     = $(APP_TARGET_DIR)/hello3.o
 CRACK1_OBJ     = $(APP_TARGET_DIR)/crack1.o
 CRACK2_OBJ     = $(APP_TARGET_DIR)/crack2.o
+A_APP          = $(APP_TARGET_DIR)/a.hrb
 HELLO_APP      = $(APP_TARGET_DIR)/hello.hrb
 HELLO2_APP     = $(APP_TARGET_DIR)/hello2.hrb
 HELLO3_APP     = $(APP_TARGET_DIR)/hello3.hrb
-A_APP          = $(APP_TARGET_DIR)/a.hrb
 CRACK1_APP     = $(APP_TARGET_DIR)/crack1.hrb
 CRACK2_APP     = $(APP_TARGET_DIR)/crack2.hrb
 
@@ -100,29 +109,72 @@ $(TARGET_DIR)/%.o: $(C_SRC_DIR)/%.c
 	$(MKDIR) -p $(TARGET_DIR)
 	$(GCC) $(CFLAGS) -c $< -o $@
 
-$(APP_TARGET_DIR)/%.o: $(APP_DIR)/%.S
-	$(MKDIR) -p $(APP_TARGET_DIR)
-	$(GCC) -c -nostdlib -m32 $< -o $@
-
 $(APP_TARGET_DIR)/%.o: $(APP_DIR)/%.c
 	$(MKDIR) -p $(APP_TARGET_DIR)
 	$(GCC) $(CFLAGS) -c $< -o $@
 
-$(A_APP): $(A_ASM_OBJ) $(A_OBJ)
+## Application ##
+
+### Applib
+$(APP_LIB_OBJ): $(APP_LIB_SRC)
+	$(MKDIR) -p $(APP_TARGET_DIR)
+	$(GCC) -c -nostdlib -m32 $< -o $@
+
+### A App
+$(A_OBJ): $(A_SRC)
+	$(MKDIR) -p $(APP_TARGET_DIR)
+	$(GCC) $(CFLAGS) -c $< -o $@
+
+$(A_APP): $(APP_LIB_OBJ) $(A_OBJ)
 	$(MKDIR) -p $(APP_TARGET_DIR)
 	$(LD) $(LFLAGS) -o $@ $(APP_FLAGS) -T $(APP_LNK) $^
 
-$(HELLO3_APP): $(A_ASM_OBJ) $(HELLO3_OBJ)
+### Hello App
+$(HELLO_OBJ): $(HELLO_SRC)
 	$(MKDIR) -p $(APP_TARGET_DIR)
-	$(LD) $(LFLAGS) -o $@ $(APP_FLAGS) -T $(APP_LNK) $^
+	$(GCC) -c -nostdlib -m32 $< -o $@
 
-$(CRACK1_APP): $(A_ASM_OBJ) $(CRACK1_OBJ)
-	$(MKDIR) -p $(APP_TARGET_DIR)
-	$(LD) $(LFLAGS) -o $@ $(APP_FLAGS) -T $(APP_LNK) $^
-
-$(APP_TARGET_DIR)/%.hrb: $(APP_TARGET_DIR)/%.o
+$(HELLO_APP): $(HELLO_OBJ)
 	$(MKDIR) -p $(APP_TARGET_DIR)
 	$(OBJCOPY) -O binary $< $@
+
+### Hello2 App
+$(HELLO2_OBJ): $(HELLO2_SRC)
+	$(MKDIR) -p $(APP_TARGET_DIR)
+	$(GCC) -c -nostdlib -m32 $< -o $@
+
+$(HELLO2_APP): $(HELLO2_OBJ)
+	$(MKDIR) -p $(APP_TARGET_DIR)
+	$(OBJCOPY) -O binary $< $@
+
+### Hello3 App
+$(HELLO3_OBJ): $(HELLO3_SRC)
+	$(MKDIR) -p $(APP_TARGET_DIR)
+	$(GCC) $(CFLAGS) -c $< -o $@
+
+$(HELLO3_APP): $(APP_LIB_OBJ) $(HELLO3_OBJ)
+	$(MKDIR) -p $(APP_TARGET_DIR)
+	$(LD) $(LFLAGS) -o $@ $(APP_FLAGS) -T $(APP_LNK) $^
+
+### Crack1 App
+$(CRACK1_OBJ): $(CRACK1_SRC)
+	$(MKDIR) -p $(APP_TARGET_DIR)
+	$(GCC) $(CFLAGS) -c $< -o $@
+
+$(CRACK1_APP): $(APP_LIB_OBJ) $(CRACK1_OBJ)
+	$(MKDIR) -p $(APP_TARGET_DIR)
+	$(LD) $(LFLAGS) -o $@ $(APP_FLAGS) -T $(APP_LNK) $^
+
+### Crack2 App
+$(CRACK2_OBJ): $(CRACK2_SRC)
+	$(MKDIR) -p $(APP_TARGET_DIR)
+	$(GCC) -c -nostdlib -m32 $< -o $@
+
+$(CRACK2_APP): $(CRACK2_OBJ)
+	$(MKDIR) -p $(APP_TARGET_DIR)
+	$(OBJCOPY) -O binary $< $@
+
+## Application ##
 
 $(TARGET_DIR)/%.o: $(LIB_DIR)/%.c
 	$(MKDIR) -p $(TARGET_DIR)
