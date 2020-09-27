@@ -22,6 +22,10 @@ Cannot be confirmed with QEMU
 
 ![template](https://github.com/watermelon892/OSPractice/blob/master/22_CLangApplication/pic/22c-2.png)
 
+22d
+
+![template](https://github.com/watermelon892/OSPractice/blob/master/22_CLangApplication/pic/22d.png)
+
 ## Usage
 
 ```
