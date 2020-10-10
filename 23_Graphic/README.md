@@ -18,6 +18,10 @@ stars app
 
 ![template](https://github.com/watermelon892/OSPractice/blob/master/23_Graphic/pic/23c.png)
 
+23d
+
+![template](https://github.com/watermelon892/OSPractice/blob/master/23_Graphic/pic/23d.png)
+
 ## Usage
 
 ```
