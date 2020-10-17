@@ -300,7 +300,7 @@ int cmd_app(struct CONSOLE *cons, int *fat, char *cmdline) {
       shtctl = (struct SHTCTL *)*((int *)0x0fe4);
       for (i = 0; i < MAX_SHEETS; i++) {
         sht = &(shtctl->sheets0[i]);
-        if ((sht->flags & 0x11) != 0x11 && sht->task == task) {
+        if ((sht->flags & 0x11) == 0x11 && sht->task == task) {
           sheet_free(sht);
         }
       }

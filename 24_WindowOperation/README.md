@@ -24,7 +24,7 @@
 
 ![template](https://github.com/watermelon892/OSPractice/blob/master/24_WindowOperation/pic/24f.png)
 
-24g
+24g - 24h
 
 ![template](https://github.com/watermelon892/OSPractice/blob/master/24_WindowOperation/pic/24g.png)
 
