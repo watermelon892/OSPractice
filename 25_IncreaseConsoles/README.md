@@ -35,6 +35,10 @@ Need to check on the actual machine.
 
 ![template](https://github.com/watermelon892/OSPractice/blob/master/25_IncreaseConsoles/pic/25h.png)
 
+25j
+
+![template](https://github.com/watermelon892/OSPractice/blob/master/25_IncreaseConsoles/pic/25j.png)
+
 ## Usage
 
 ```
