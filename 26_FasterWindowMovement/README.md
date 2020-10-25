@@ -1,6 +1,6 @@
 ## Demo
 
-26a
+26a - 26b
 
 ![template](https://github.com/watermelon892/OSPractice/blob/master/26_FasterWindowMovement/pic/26a.png)
 
