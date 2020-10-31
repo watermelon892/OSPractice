@@ -14,7 +14,7 @@
 
 ![template](https://github.com/watermelon892/OSPractice/blob/master/26_FasterWindowMovement/pic/26f.png)
 
-26g
+26g - 26h
 
 ![template](https://github.com/watermelon892/OSPractice/blob/master/26_FasterWindowMovement/pic/26g-1.png)
 
