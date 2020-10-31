@@ -26,6 +26,10 @@
 
 ![template](https://github.com/watermelon892/OSPractice/blob/master/26_FasterWindowMovement/pic/26i.png)
 
+26j
+
+![template](https://github.com/watermelon892/OSPractice/blob/master/26_FasterWindowMovement/pic/26j.png)
+
 ## Usage
 
 ```
