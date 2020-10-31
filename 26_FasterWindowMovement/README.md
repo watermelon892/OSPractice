@@ -14,6 +14,14 @@
 
 ![template](https://github.com/watermelon892/OSPractice/blob/master/26_FasterWindowMovement/pic/26f.png)
 
+26g
+
+![template](https://github.com/watermelon892/OSPractice/blob/master/26_FasterWindowMovement/pic/26g-1.png)
+
+![template](https://github.com/watermelon892/OSPractice/blob/master/26_FasterWindowMovement/pic/26g-2.png)
+
+![template](https://github.com/watermelon892/OSPractice/blob/master/26_FasterWindowMovement/pic/26g-3.png)
+
 ## Usage
 
 ```
