@@ -16,6 +16,10 @@
 
 ![template](https://github.com/watermelon892/OSPractice/blob/master/27_LDT_And_Library/pic/27c.png)
 
+27d
+
+![template](https://github.com/watermelon892/OSPractice/blob/master/27_LDT_And_Library/pic/27d.png)
+
 ## Usage
 
 ```
